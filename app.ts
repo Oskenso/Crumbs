@@ -508,6 +508,11 @@ ready(function () {
 	window.vmd = vm;
 
 
+	document.getElementById('btn-load-rom').addEventListener('click', function(e){
+		document.getElementById('rFile').click();
+		e.preventDefault();
+	});
+
 	function keypad(code: number, pressed: number) {
 
 		switch (code) {
@@ -516,18 +521,21 @@ ready(function () {
 			case 0x32: vm.Keys[0x1] = pressed; break; //2
 			case 0x33: vm.Keys[0x2] = pressed; break; //3
 			case 0x34: vm.Keys[0x3] = pressed; break; //4
+
 			case 0x51: case 0x71: vm.Keys[0x4] = pressed; break; //q
-			case 0x57: case 0x57: vm.Keys[0x5] = pressed; break; //w
+			case 0x77: case 0x57: vm.Keys[0x5] = pressed; break; //w
 			case 0x45: case 0x65: vm.Keys[0x6] = pressed; break; //e
 			case 0x52: case 0x72: vm.Keys[0x7] = pressed; break; //r
-			case 0x41: case 0x61: vm.Keys[0x8] = pressed; break;//a
+
+			case 0x41: case 0x61: vm.Keys[0x8] = pressed; break; //a
 			case 0x53: case 0x73: vm.Keys[0x9] = pressed; break; //s
-			case 0x44: case 0x64: vm.Keys[0xA] = pressed; break;//d
-			case 0x46: case 0x66: vm.Keys[0xB] = pressed; break;
-			case 0x5A: case 0x70: vm.Keys[0xC] = pressed; break;
-			case 0x58: case 0x78: vm.Keys[0xD] = pressed; break;
-			case 0x43: case 0x63: vm.Keys[0xE] = pressed; break;
-			case 0x56: case 0x76: vm.Keys[0xF] = pressed; break;
+			case 0x44: case 0x64: vm.Keys[0xA] = pressed; break; //d
+			case 0x46: case 0x66: vm.Keys[0xB] = pressed; break; //f
+
+			case 0x5A: case 0x79: vm.Keys[0xC] = pressed; break; //z
+			case 0x58: case 0x78: vm.Keys[0xD] = pressed; break; //x
+			case 0x43: case 0x63: vm.Keys[0xE] = pressed; break; //c
+			case 0x56: case 0x76: vm.Keys[0xF] = pressed; break; //v
 		}
 	}
 

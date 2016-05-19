@@ -2,18 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width">
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Cache-Control" content="no-cache,no-Store" />
 	<meta name="author" content="contact@oskenso.com">
 
-    <title>  </title>
+    <title>Crumbs</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="app.css" type="text/css" />
 
 </head>
 <body>
-    <div id="content">
+
+<header class="navbar navbar-dark bg-inverse navbar-static-top bd-navbar" role="banner">
+	<div class="clearfix">
+		<button class="navbar-toggler pull-xs-right hidden-sm-up" type="button" data-toggle="collapse" data-target="#bd-main-nav">
+			&#9776;
+		</button>
+		<a class="navbar-brand hidden-sm-up" href="/">
+			Crumbs
+		</a>
+	</div>
+	<div class="collapse navbar-toggleable-xs" id="bd-main-nav">
+		<nav class="nav navbar-nav">
+
+
+			<a class="nav-item nav-link " href="/">Crumbs</a>
+
+			<button class="nav-item btn btn-primary">
+				<i id="btn-load-rom" class="fa fa-folder-open"></i>
+			</button>
+
+		</nav>
+	</div>
+</header>
+
+    <div id="content" class="container">
+
 		<input id="rFile" type="file" />
 		<canvas id="gDisplay" width="64" height="32"></canvas>
 		<canvas id="memView" width="64" height="64"></canvas>
@@ -21,5 +48,7 @@
 
 	</div>
 	<script src="app.js"></script>
+
+
 </body>
 </html>

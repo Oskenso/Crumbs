@@ -5,7 +5,8 @@ body {
 }
 
 #gDisplay {
-	width: 128px;
+	width: 256px;
+	image-rendering: pixelated;
 }
 #memView {
 	width:192px;
