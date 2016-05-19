@@ -1,0 +1,16 @@
+﻿@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);
+
+body {
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+#gDisplay {
+	width: 128px;
+}
+#memView {
+	width:192px;
+	image-rendering:pixelated;
+	background-color: #F7F7F7;
+	box-shadow: #CECECE 1px 1px 4px;
+	border-radius: 1px;
+}
