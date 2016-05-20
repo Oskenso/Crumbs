@@ -1,8 +1,12 @@
-﻿
+﻿function $(e: string): HTMLElement {
+	return <HTMLElement> document.querySelectorAll(e)[0];
+}
+
 function getRandomByte() {
 	return Math.floor(Math.random() * 256);
 }
 
+//http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
 function HSVtoRGB(h, s, v) {
 	var r, g, b, i, f, p, q, t;
 				if (h && s === undefined && v === undefined) {
@@ -135,6 +139,7 @@ class VM {
 		this.sData = new Uint32Array(this.sBuf);
 
 		this.V = new Uint8Array(new ArrayBuffer(16));
+
 		this.Stack = new Array();
 
 		this.Mem = new Uint8Array(new ArrayBuffer(4096));
@@ -215,6 +220,10 @@ class VM {
 					case 0x00EE: //RET
 						this.PC = this.Stack.pop();
 						break;
+
+					default:
+						//SYS call :D
+						break;
 				}
 				break;
 
@@ -268,16 +277,23 @@ class VM {
 						this.V[x] |= this.V[y];
 						break;
 
-					case 0x0001: // Set Vx equal to Vx AMD Vy
+					case 0x0002: // Set Vx equal to Vx AND Vy
 						this.V[x] &= this.V[y];
 						break;
 
-					case 0x0004: // XOR Vx, Vy - 8xy3. Set Vx equal to Vx XOR Vy.
+					case 0x0003: // XOR Vx, Vy - 8xy3. Set Vx equal to Vx XOR Vy.
 						this.V[x] ^= this.V[y];
 						break;
 
-					case 0x0005: //SUB Vx, Vy - 8xy5. Set Vx equal to Vx - Vy, set Vf equal to NOT borrow.
+					case 0x0004: // ADD Vx, Vy - 8xy4.
+						this.V[x] += this.V[y];
+						if (this.V[x] + this.V[y] > 255)
+							this.V[0xF] = 1;
+						else
+							this.V[0xF] = 0;
+						break;
 
+					case 0x0005: //SUB Vx, Vy - 8xy5. Set Vx equal to Vx - Vy, set Vf equal to NOT borrow.
 						this.V[0xF] = + (this.V[x] > this.V[y]);
 						this.V[x] -= this.V[y];
 						break;
@@ -292,7 +308,7 @@ class VM {
 						this.V[x] = this.V[y] - this.V[x];
 						break;
 
-					case 0x0008: //Set Vx equal to Vx SHL 1.
+					case 0x000E: //Set Vx equal to Vx SHL 1.
 						this.V[0xF] = +(this.V[x] & 0x80);
 						this.V[x] = this.V[x] << 1;
 						break;
@@ -413,6 +429,10 @@ class VM {
 						break;
 				}
 				break;
+
+			default:
+				console.log('unknown opcode: ' + opcode.toString(16));
+				break;
 		}
 
 		if (this.DelayTimer > 0)
@@ -489,30 +509,72 @@ class VM {
 		this.context.clearRect(0, 0, this.sWidth, this.sHeight);
 		this.context.drawImage(this.canvasBuf, 0, 0);
 		*/
-
-
-
-		//this.context.drawImage(tmp, 0, 0, this.sWidth * (this.sWidth / 64), this.sHeight*(this.sHeight / 32));
-
 	}
 
 }
 
 function ready(fn) { if (document.readyState != 'loading') { fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
 ready(function () {
-	var e = <HTMLCanvasElement>document.getElementById('gDisplay');
+	var e = <HTMLCanvasElement>$('#gDisplay');
 	var vm = new VM(e);
-	vm.memoryView = <HTMLCanvasElement>document.getElementById('memView');
+
+	//removable :D 
+	vm.memoryView = <HTMLCanvasElement>$('#memView');
 	vm.memoryViewCtx = <CanvasRenderingContext2D>vm.memoryView.getContext('2d');
 
-	window.vmd = vm;
+	//debug
+	//window.vmd = vm;
 
-
-	document.getElementById('btn-load-rom').addEventListener('click', function(e){
-		document.getElementById('rFile').click();
+	//Setup nav buttons
+	$('#btn-load-rom').addEventListener('click', function(e){
+		$('#rFile').click();
 		e.preventDefault();
 	});
 
+	$('#btn-run').addEventListener('click', function (e) {
+		vm.running = true;
+		e.preventDefault();
+	});
+
+	$('#btn-step').addEventListener('click', function (e) {
+		vm.running = false;
+
+		var opcode = vm.Mem[vm.PC] << 8 | vm.Mem[vm.PC + 1];
+		console.log('Opcode 0x' + (("0000" + (opcode).toString(16)).substr(-4)));// + ' : ' + DebugOpcodes[opcode]
+
+		var prettyReg = '[' + vm.V.toString().split(',').map(function (e) { return '0x' + parseInt(e).toString(16) + ', '; }).join('') + ']';
+		console.log('Registers: ' + prettyReg);
+
+
+		console.log('I: 0x' + vm.I.toString(16));
+		console.log('Stack: ' + '[' + vm.Stack.map(function (e) { return '0x' + e.toString(16) }).join('') + ']');
+		
+
+		vm.update();
+		if (vm.drawFlag)
+			vm.render();
+
+		
+		e.preventDefault();
+	});
+
+	$('#btn-pause').addEventListener('click', function (e) {
+		vm.running = false;
+		e.preventDefault();
+	});
+
+	$('#btn-stop').addEventListener('click', function (e) {
+		vm.reset();
+		e.preventDefault();
+	});
+
+	$('#btn-reset').addEventListener('click', function (e) {
+		vm.reset();
+		e.preventDefault();
+	});
+
+	
+	//Handle keyboard inputs
 	function keypad(code: number, pressed: number) {
 
 		switch (code) {
@@ -539,15 +601,16 @@ ready(function () {
 		}
 	}
 
-	document.getElementsByTagName('body')[0].addEventListener('keydown', function (e) {
+	$('body').addEventListener('keydown', function (e) {
 		keypad(e.which, 1);
 	});
-	document.getElementsByTagName('body')[0].addEventListener('keyup', function (e) {
+
+	$('body').addEventListener('keyup', function (e) {
 		keypad(e.which, 0);
 	});
 
-
-	var fileLoad = <HTMLInputElement>document.getElementById('rFile');
+	//Binary file reader
+	var fileLoad = <HTMLInputElement>$('#rFile');
 	fileLoad.addEventListener('change', function (evt: Event) {
 		var file = fileLoad.files[0];
 		var reader = new FileReader();
@@ -558,6 +621,9 @@ ready(function () {
 		reader.readAsArrayBuffer(file);
 	});
 
+
+
+	//Initiate render & update loops :D
 	var updateLoop = setInterval(function () {
 		//for (var i = 0; i < 10; i++)
 			vm.update();

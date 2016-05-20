@@ -17,38 +17,56 @@
 <body>
 
 <header class="navbar navbar-dark bg-inverse navbar-static-top bd-navbar" role="banner">
-	<div class="clearfix">
-		<button class="navbar-toggler pull-xs-right hidden-sm-up" type="button" data-toggle="collapse" data-target="#bd-main-nav">
-			&#9776;
+	<a class="navbar-brand" href="/">Crumbs</a>
+	<nav class="nav navbar-nav pull-xs-right">
+		<button class="nav-item btn btn-sm btn-primary">
+			<i id="btn-load-rom" class="fa fa-folder-open"></i>
 		</button>
-		<a class="navbar-brand hidden-sm-up" href="/">
-			Crumbs
-		</a>
-	</div>
-	<div class="collapse navbar-toggleable-xs" id="bd-main-nav">
-		<nav class="nav navbar-nav">
+		
+		<button id="btn-run" class="nav-item btn btn-sm btn-success">
+			<i class="fa fa-play"></i>
+		</button>
+		
+		<button id="btn-step" class="nav-item btn btn-sm btn-info">
+			<i class="fa fa-step-forward"></i>
+		</button>
+		
+		<button id="btn-pause" class="nav-item btn btn-sm btn-warning">
+			<i class="fa fa-pause"></i>
+		</button>
+		
+		<button id="btn-stop" class="nav-item btn btn-sm btn-danger">
+			<i class="fa fa-stop"></i> 
+		</button>
+		
+		<button id="btn-reset" class="nav-item btn btn-sm btn-secondary">
+			<i class="fa fa-refresh"></i>
+		</button>
 
+	</nav>
 
-			<a class="nav-item nav-link " href="/">Crumbs</a>
-
-			<button class="nav-item btn btn-primary">
-				<i id="btn-load-rom" class="fa fa-folder-open"></i>
-			</button>
-
-		</nav>
-	</div>
 </header>
 
     <div id="content" class="container">
 
-		<input id="rFile" type="file" />
-		<canvas id="gDisplay" width="64" height="32"></canvas>
-		<canvas id="memView" width="64" height="64"></canvas>
-
+		<input id="rFile" type="file" style="display: none;" />
+		<div class="row">
+			<div id="col-display" class="col-xs-12">
+				
+				<canvas id="gDisplay" class="display" width="64" height="32"></canvas>
+				
+			</div>
+			
+			<div id="col-memView" class="col-xs-12">
+				<p class="lead">Memory View</p>
+				<canvas id="memView" class="display" width="64" height="64"></canvas>
+			</div>
+		</div>
+		
 
 	</div>
-	<script src="app.js"></script>
 
+	<script src="app.js"></script>
 
 </body>
 </html>

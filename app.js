@@ -1,3 +1,6 @@
+function $(e) {
+    return document.querySelectorAll(e)[0];
+}
 function getRandomByte() {
     return Math.floor(Math.random() * 256);
 }
@@ -154,6 +157,8 @@ var VM = (function () {
                     case 0x00EE:
                         this.PC = this.Stack.pop();
                         break;
+                    default:
+                        break;
                 }
                 break;
             case 0x1000:
@@ -191,11 +196,18 @@ var VM = (function () {
                     case 0x0001:
                         this.V[x] |= this.V[y];
                         break;
-                    case 0x0001:
+                    case 0x0002:
                         this.V[x] &= this.V[y];
                         break;
-                    case 0x0004:
+                    case 0x0003:
                         this.V[x] ^= this.V[y];
+                        break;
+                    case 0x0004:
+                        this.V[x] += this.V[y];
+                        if (this.V[x] + this.V[y] > 255)
+                            this.V[0xF] = 1;
+                        else
+                            this.V[0xF] = 0;
                         break;
                     case 0x0005:
                         this.V[0xF] = +(this.V[x] > this.V[y]);
@@ -209,7 +221,7 @@ var VM = (function () {
                         this.V[0xF] = +(this.V[y] > this.V[x]);
                         this.V[x] = this.V[y] - this.V[x];
                         break;
-                    case 0x0008:
+                    case 0x000E:
                         this.V[0xF] = +(this.V[x] & 0x80);
                         this.V[x] = this.V[x] << 1;
                         break;
@@ -301,6 +313,9 @@ var VM = (function () {
                         break;
                 }
                 break;
+            default:
+                console.log('unknown opcode: ' + opcode.toString(16));
+                break;
         }
         if (this.DelayTimer > 0)
             this.DelayTimer--;
@@ -365,13 +380,41 @@ else {
     document.addEventListener('DOMContentLoaded', fn);
 } }
 ready(function () {
-    var e = document.getElementById('gDisplay');
+    var e = $('#gDisplay');
     var vm = new VM(e);
-    vm.memoryView = document.getElementById('memView');
+    vm.memoryView = $('#memView');
     vm.memoryViewCtx = vm.memoryView.getContext('2d');
-    window.vmd = vm;
-    document.getElementById('btn-load-rom').addEventListener('click', function (e) {
-        document.getElementById('rFile').click();
+    $('#btn-load-rom').addEventListener('click', function (e) {
+        $('#rFile').click();
+        e.preventDefault();
+    });
+    $('#btn-run').addEventListener('click', function (e) {
+        vm.running = true;
+        e.preventDefault();
+    });
+    $('#btn-step').addEventListener('click', function (e) {
+        vm.running = false;
+        var opcode = vm.Mem[vm.PC] << 8 | vm.Mem[vm.PC + 1];
+        console.log('Opcode 0x' + (("0000" + (opcode).toString(16)).substr(-4)));
+        var prettyReg = '[' + vm.V.toString().split(',').map(function (e) { return '0x' + parseInt(e).toString(16) + ', '; }).join('') + ']';
+        console.log('Registers: ' + prettyReg);
+        console.log('I: 0x' + vm.I.toString(16));
+        console.log('Stack: ' + '[' + vm.Stack.map(function (e) { return '0x' + e.toString(16); }).join('') + ']');
+        vm.update();
+        if (vm.drawFlag)
+            vm.render();
+        e.preventDefault();
+    });
+    $('#btn-pause').addEventListener('click', function (e) {
+        vm.running = false;
+        e.preventDefault();
+    });
+    $('#btn-stop').addEventListener('click', function (e) {
+        vm.reset();
+        e.preventDefault();
+    });
+    $('#btn-reset').addEventListener('click', function (e) {
+        vm.reset();
         e.preventDefault();
     });
     function keypad(code, pressed) {
@@ -438,13 +481,13 @@ ready(function () {
                 break;
         }
     }
-    document.getElementsByTagName('body')[0].addEventListener('keydown', function (e) {
+    $('body').addEventListener('keydown', function (e) {
         keypad(e.which, 1);
     });
-    document.getElementsByTagName('body')[0].addEventListener('keyup', function (e) {
+    $('body').addEventListener('keyup', function (e) {
         keypad(e.which, 0);
     });
-    var fileLoad = document.getElementById('rFile');
+    var fileLoad = $('#rFile');
     fileLoad.addEventListener('change', function (evt) {
         var file = fileLoad.files[0];
         var reader = new FileReader();

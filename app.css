@@ -4,14 +4,29 @@ body {
 	font-family: 'Source Sans Pro', sans-serif;
 }
 
-#gDisplay {
-	width: 256px;
-	image-rendering: pixelated;
-}
-#memView {
-	width:192px;
+.display {
 	image-rendering:pixelated;
 	background-color: #F7F7F7;
 	box-shadow: #CECECE 1px 1px 4px;
-	border-radius: 1px;
+}
+
+#gDisplay {
+	width: 256px;
+	width: 100%;
+	max-width:512px;
+}
+#memView {
+	width:192px;
+	width: 100%;
+	max-width: 384px;
+
+}
+
+button.nav-item {
+	margin-top:0.25rem;
+
+}
+#col-memView, #col-display {
+	text-align: center;
+	margin-top:2rem;
 }
