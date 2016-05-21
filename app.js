@@ -179,7 +179,7 @@ var VM = (function () {
                 }
                 break;
             case 0x5000:
-                if (this.V[x] == (opcode & 0xFF))
+                if (this.V[x] == this.V[y])
                     this.PC += 2;
                 break;
             case 0x6000:
@@ -324,14 +324,18 @@ var VM = (function () {
         if (this.SoundTimer == 1)
             console.log('Beep :D');
     };
-    VM.prototype.update = function () {
-        if (!this.running)
-            return false;
+    VM.prototype.update = function (ignore) {
+        if (ignore === void 0) { ignore = null; }
+        if (!ignore)
+            if (!this.running)
+                return false;
         this.Execute();
     };
-    VM.prototype.render = function () {
-        if (!this.running)
-            return false;
+    VM.prototype.render = function (ignore) {
+        if (ignore === void 0) { ignore = null; }
+        if (!ignore)
+            if (!this.running)
+                return false;
         if (this.memoryView !== null) {
             var imageData = this.memoryViewCtx.getImageData(0, 0, 64, 64);
             var buf = new ArrayBuffer(imageData.data.length);
@@ -400,9 +404,9 @@ ready(function () {
         console.log('Registers: ' + prettyReg);
         console.log('I: 0x' + vm.I.toString(16));
         console.log('Stack: ' + '[' + vm.Stack.map(function (e) { return '0x' + e.toString(16); }).join('') + ']');
-        vm.update();
+        vm.update(true);
         if (vm.drawFlag)
-            vm.render();
+            vm.render(true);
         e.preventDefault();
     });
     $('#btn-pause').addEventListener('click', function (e) {

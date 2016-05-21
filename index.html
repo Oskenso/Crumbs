@@ -19,26 +19,26 @@
 <header class="navbar navbar-dark bg-inverse navbar-static-top bd-navbar" role="banner">
 	<a class="navbar-brand" href="/">Crumbs</a>
 	<nav class="nav navbar-nav pull-xs-right">
-		<button class="nav-item btn btn-sm btn-primary">
-			<i id="btn-load-rom" class="fa fa-folder-open"></i>
+		<button id="btn-load-rom" class="nav-item btn btn-sm btn-primary">
+			<i class="fa fa-folder-open"></i>
 		</button>
-		
+
 		<button id="btn-run" class="nav-item btn btn-sm btn-success">
 			<i class="fa fa-play"></i>
 		</button>
-		
+
 		<button id="btn-step" class="nav-item btn btn-sm btn-info">
 			<i class="fa fa-step-forward"></i>
 		</button>
-		
+
 		<button id="btn-pause" class="nav-item btn btn-sm btn-warning">
 			<i class="fa fa-pause"></i>
 		</button>
-		
+
 		<button id="btn-stop" class="nav-item btn btn-sm btn-danger">
-			<i class="fa fa-stop"></i> 
+			<i class="fa fa-stop"></i>
 		</button>
-		
+
 		<button id="btn-reset" class="nav-item btn btn-sm btn-secondary">
 			<i class="fa fa-refresh"></i>
 		</button>
@@ -52,17 +52,17 @@
 		<input id="rFile" type="file" style="display: none;" />
 		<div class="row">
 			<div id="col-display" class="col-xs-12">
-				
+
 				<canvas id="gDisplay" class="display" width="64" height="32"></canvas>
-				
+
 			</div>
-			
+
 			<div id="col-memView" class="col-xs-12">
 				<p class="lead">Memory View</p>
 				<canvas id="memView" class="display" width="64" height="64"></canvas>
 			</div>
 		</div>
-		
+
 
 	</div>
 

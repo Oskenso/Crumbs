@@ -252,7 +252,7 @@ class VM {
 
 			// Skip next instruction if vX equals vY.
 			case 0x5000:
-				if (this.V[x] == (opcode & 0xFF))
+				if (this.V[x] == this.V[y])
 					this.PC += 2;
 				break;
 
@@ -444,13 +444,15 @@ class VM {
 			console.log('Beep :D');
 	}
 
-	public update() {
+	public update(ignore = null) {
+		if (!ignore)
 		if (!this.running) return false;
 
 		this.Execute();
 	}
 
-	public render() {
+	public render(ignore = null) {
+		if (!ignore)
 		if (!this.running) return false;
 
 		//draw memory
@@ -518,7 +520,7 @@ ready(function () {
 	var e = <HTMLCanvasElement>$('#gDisplay');
 	var vm = new VM(e);
 
-	//removable :D 
+	//removable :D
 	vm.memoryView = <HTMLCanvasElement>$('#memView');
 	vm.memoryViewCtx = <CanvasRenderingContext2D>vm.memoryView.getContext('2d');
 
@@ -548,13 +550,13 @@ ready(function () {
 
 		console.log('I: 0x' + vm.I.toString(16));
 		console.log('Stack: ' + '[' + vm.Stack.map(function (e) { return '0x' + e.toString(16) }).join('') + ']');
-		
 
-		vm.update();
+
+		vm.update(true);
 		if (vm.drawFlag)
-			vm.render();
+			vm.render(true);
 
-		
+
 		e.preventDefault();
 	});
 
@@ -573,7 +575,7 @@ ready(function () {
 		e.preventDefault();
 	});
 
-	
+
 	//Handle keyboard inputs
 	function keypad(code: number, pressed: number) {
 
