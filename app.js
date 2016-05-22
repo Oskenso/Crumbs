@@ -294,11 +294,11 @@ var VM = (function () {
                         this.I = (this.I + this.V[x]) & 0xFFFF;
                         break;
                     case 0x0029:
-                        this.I = this.V[x] * 5;
+                        this.I = (this.V[x] & 0xF) * 5;
                         break;
                     case 0x0033:
-                        this.Mem[this.I] = this.V[x] / 100;
-                        this.Mem[this.I + 1] = this.V[x] % 100 / 10;
+                        this.Mem[this.I] = (this.V[x] / 100) % 10;
+                        this.Mem[this.I + 1] = (this.V[x] / 10) % 10;
                         this.Mem[this.I + 2] = this.V[x] % 10;
                         break;
                     case 0x0055:
@@ -502,7 +502,7 @@ ready(function () {
     });
     var updateLoop = setInterval(function () {
         vm.update();
-    }, 1);
+    }, 1000 / 60);
     var renderLoop = function () {
         vm.render();
         window.requestAnimationFrame(renderLoop);

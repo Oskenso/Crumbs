@@ -403,14 +403,14 @@ class VM {
 						break;
 
 					case 0x0029: // Set I equal to location of sprite for digit Vx.
-						this.I = this.V[x] * 5;
+						this.I = (this.V[x] & 0xF )* 5;
 						break;
 
 					case 0x0033: // Store BCD representation of Vx in memory location starting at location I.
                         //for (var i = 3; i > 0; i--) {
                             //this.Mem[this.I + i - 1] = (this.V[x]) % 10);
-							this.Mem[this.I]     = this.V[x] / 100;
-							this.Mem[this.I + 1] = this.V[x] % 100 / 10;
+							this.Mem[this.I]     = (this.V[x] / 100) % 10;
+							this.Mem[this.I + 1] = (this.V[x] / 10) % 10;
 							this.Mem[this.I + 2] = this.V[x] % 10;
 							//throw new Error(':D');
                         //}
@@ -629,7 +629,7 @@ ready(function () {
 	var updateLoop = setInterval(function () {
 		//for (var i = 0; i < 10; i++)
 			vm.update();
-	}, 1);
+	}, 1000/60);
 	var renderLoop = function () {
 		//vm.update();
 		vm.render();
